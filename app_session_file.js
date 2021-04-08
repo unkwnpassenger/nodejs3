@@ -11,6 +11,14 @@ app.use(session({
     saveUninitialized: true,
     store: new FileStore()
 }));
+app.get('/count', function(req, res) {
+    if(req.session.count) {
+        req.session.count++;
+    } else {
+        req.session.count = 1;
+    }
+    res.send('count: '+ req.session.count);
+});
 app.get('/auth/login', function(req, res) {
     var output = `
     <h1>Login</h1>
@@ -28,14 +36,6 @@ app.get('/auth/login', function(req, res) {
     `;
       res.send(output);
   });
-app.get('/count', function(req, res) {
-    if(req.session.count) {
-        req.session.count++;
-    } else {
-        req.session.count = 1;
-    }
-    res.send('count: '+ req.session.count);
-});
 app.get('/auth/logout', function(req, res) {
     delete req.session.displayName;
     res.redirect('/welcome');
