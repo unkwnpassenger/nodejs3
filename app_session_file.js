@@ -1,7 +1,6 @@
 var express = require('express');
 var session = require('express-session');
-var FileStore =
-require('session-file-store')(session);
+var FileStore = require('session-file-store')(session);
 var bodyParser = require('body-parser');
 var app = express();
 app.use(express.urlencoded({ extended: false }));
@@ -19,32 +18,15 @@ app.get('/count', function(req, res) {
     }
     res.send('count: '+ req.session.count);
 });
-app.get('/auth/login', function(req, res) {
-    var output = `
-    <h1>Login</h1>
-    <form action="/auth/login" method="post">
-      <p>
-          <input type="text" name="username" placeholder="username">
-      </p>
-      <p>
-          <input type="password" name="password" placeholder="password">
-      </p>
-      <p>
-          <input type="submit">
-      </p>
-    </form>
-    `;
-      res.send(output);
-  });
 app.get('/auth/logout', function(req, res) {
     delete req.session.displayName;
     res.redirect('/welcome');
 });
 app.get('/welcome', function(req, res) {
-    if(req.session.displayName) {
+    if(req.session.displayName) { // 없을때 => 새로운 session start + logout 안됨 => why...?
         res.send(`
             <h1>Hello, ${req.session.displayName}</h1>
-            <a href="/auth/logout">Logout</a>
+            <a href="/auth/logout">Logout</a> 
         `);
     } else {
         res.send(`
@@ -63,12 +45,30 @@ app.post('/auth/login', function(req, res) { // 순서 중요함
     var pwd = req.body.password;
     if(uname === user.username && pwd === user.password) {
         req.session.displayName = user.displayName;
+        console.log(req.session.displayName);
         res.redirect('/welcome');
     } else {
         res.send('Who are you? <a href="/auth/login">Login</a>');
     }
-    res.send(uname); // submit => form [username]
 });
+app.get('/auth/login', function(req, res) {
+    var output = `
+    <h1>Login</h1>
+    <form action="/auth/login" method="post">
+      <p>
+          <input type="text" name="username" placeholder="username">
+      </p>
+      <p>
+          <input type="password" name="password" placeholder="password">
+      </p>
+      <p>
+          <input type="submit">
+      </p>
+    </form>
+    `;
+      res.send(output);
+  });
+
 app.listen(3003, function(){
     console.log('Connected 3003 port');
 })
