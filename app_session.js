@@ -41,6 +41,7 @@ app.get('/auth/logout', function(req, res) {
     res.redirect('/welcome');
 });
 app.get('/welcome', function(req, res) {
+    console.log(req.session.displayName);
     if(req.session.displayName) {
         res.send(`
             <h1>Hello, ${req.session.displayName}</h1>
@@ -67,8 +68,7 @@ app.post('/auth/login', function(req, res) { // 순서 중요함
     } else {
         res.send('Who are you? <a href="/auth/login">Login</a>');
     }
-    res.send(uname); // submit => form [username]
 });
-app.listen(3003, function(){
-    console.log('Connected 3003 port');
+app.listen(3000, function(){
+    console.log('Connected 3000 port');
 })
